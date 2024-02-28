@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WebLoader"
         mc:Ignorable="d"
-        Title="WebLoader" Height="452.368" Width="358.289">
+        Title="WebLoader" Height="439" Width="360" ResizeMode="NoResize">
     <Grid>
+        <ListBox x:Name="listLoads" Height="331" Margin="10,10,10,0" VerticalAlignment="Top"/>
+        <Grid x:Name="Buttons" Margin="10,0,10,10" Height="54" VerticalAlignment="Bottom">
+            <Button x:Name="buttonLoad" Content="Загрузить" Margin="0,10,85,9"/>
+            <Button x:Name="buttonAdd" Content="+" HorizontalAlignment="Right" Margin="0,10,45,0" Width="35" Height="35" VerticalAlignment="Top" FontWeight="Bold" FontSize="20"/>
+            <Button x:Name="buttonRemove" Content="-" HorizontalAlignment="Right" Margin="0,10,4,0" Width="35" Height="35" VerticalAlignment="Top" FontWeight="Bold" FontSize="20"/>
+        </Grid>
 
     </Grid>
 </Window>

@@ -5,13 +5,40 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WebLoader"
         mc:Ignorable="d"
-        Title="WebLoader" Height="439" Width="360" ResizeMode="NoResize">
+        Title="WebLoader" Height="439" Width="550" ResizeMode="NoResize">
     <Grid>
-        <ListBox x:Name="listLoads" Height="331" Margin="10,10,10,0" VerticalAlignment="Top"/>
-        <Grid x:Name="Buttons" Margin="10,0,10,10" Height="54" VerticalAlignment="Bottom">
-            <Button x:Name="buttonLoad" Content="Загрузить" Margin="0,10,85,9"/>
-            <Button x:Name="buttonAdd" Content="+" HorizontalAlignment="Right" Margin="0,10,45,0" Width="35" Height="35" VerticalAlignment="Top" FontWeight="Bold" FontSize="20"/>
-            <Button x:Name="buttonRemove" Content="-" HorizontalAlignment="Right" Margin="0,10,4,0" Width="35" Height="35" VerticalAlignment="Top" FontWeight="Bold" FontSize="20"/>
+        <ListBox x:Name="listLoads" Height="331" Margin="10,10,10,0" VerticalAlignment="Top">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    <Setter Property="Margin" Value="0,0,0,10"></Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel  Margin="10" Orientation="Horizontal" Height="24" VerticalAlignment="Center">
+                            <TextBlock FontSize="16" Text="Ссылка:"/>
+                            <Separator Opacity="0" Width="5"/>
+                            <TextBox FontSize="16" Width="150" Text="{Binding Path=Link}"/>
+                            <Separator Opacity="0" Width="10"/>
+                            <TextBlock FontSize="16" Text="Приоритет:"/>
+                            <Separator Opacity="0" Width="5"/>
+                            <Slider x:Name="slider" Value="{Binding Path=Priority}" Width="100" Maximum="5" Minimum="0"/>
+                        </StackPanel>
+                        <TextBlock Text="15 Mb/s"/>
+                        <ProgressBar Height="8"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+
+        </ListBox>
+            <Grid x:Name="Buttons" Margin="10,0,10,10" Height="54" VerticalAlignment="Bottom">
+            <Button x:Name="buttonLoad" Content="Загрузить" Margin="0,10,85,9" Click="buttonLoad_Click"/>
+            <Button x:Name="buttonAdd" Content="+" HorizontalAlignment="Right" Margin="0,10,45,0" Width="35" Height="35" VerticalAlignment="Top" FontWeight="Bold" FontSize="20" Click="buttonAdd_Click"/>
+            <Button x:Name="buttonRemove" Content="-" HorizontalAlignment="Right" Margin="0,10,4,0" Width="35" Height="35" VerticalAlignment="Top" FontWeight="Bold" FontSize="20" Click="buttonRemove_Click"/>
         </Grid>
 
     </Grid>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,10 +21,28 @@ namespace WebLoader
     /// </summary>
     public partial class MainWindow : Window
     {
+        public ObservableCollection<LoadLink> LoadLinks = new ObservableCollection<LoadLink>();
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
+        private void buttonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            LoadLinks.Add(new LoadLink("",0));
+            listLoads.ItemsSource = LoadLinks;
+        }
+
+        private void buttonRemove_Click(object sender, RoutedEventArgs e)
+        {
+            if(listLoads.Items.Count > 0)
+                LoadLinks.RemoveAt(listLoads.Items.Count-1);
+        }
+
+        private void buttonLoad_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

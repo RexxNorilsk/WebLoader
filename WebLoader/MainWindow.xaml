@@ -27,8 +27,8 @@
                             <Separator Opacity="0" Width="5"/>
                             <Slider x:Name="slider" Value="{Binding Path=Priority}" Width="100" Maximum="5" Minimum="0"/>
                         </StackPanel>
-                        <TextBlock Text="15 Mb/s"/>
-                        <ProgressBar Height="8"/>
+                        <TextBlock Text="{Binding Path=Speed}"/>
+                        <ProgressBar Height="8" Value="{Binding Path=Progress}" Minimum="0" Maximum="100"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

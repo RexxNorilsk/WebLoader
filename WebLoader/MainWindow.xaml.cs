@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Linq;
 
 namespace WebLoader
 {
@@ -21,7 +22,8 @@ namespace WebLoader
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ObservableCollection<LoadLink> LoadLinks = new ObservableCollection<LoadLink>();
+        private ObservableCollection<LoadLink> _loadLinks = new ObservableCollection<LoadLink>();
+        private Loader _currentLoader;
 
         public MainWindow()
         {
@@ -30,19 +32,22 @@ namespace WebLoader
 
         private void buttonAdd_Click(object sender, RoutedEventArgs e)
         {
-            LoadLinks.Add(new LoadLink("",0));
-            listLoads.ItemsSource = LoadLinks;
+            _loadLinks.Add(new LoadLink("",0));
+            listLoads.ItemsSource = _loadLinks;
         }
 
         private void buttonRemove_Click(object sender, RoutedEventArgs e)
         {
             if(listLoads.Items.Count > 0)
-                LoadLinks.RemoveAt(listLoads.Items.Count-1);
+                _loadLinks.RemoveAt(listLoads.Items.Count-1);
         }
 
         private void buttonLoad_Click(object sender, RoutedEventArgs e)
         {
-
+            if(_currentLoader == null)
+                _currentLoader = new Loader(_loadLinks);
+            else if(_currentLoader.IsFinal())
+                _currentLoader = new Loader(_loadLinks);
         }
     }
 }

@@ -47,6 +47,7 @@ namespace WebLoader
                     {
                         wc.DownloadProgressChanged += (s, e) => { 
                             _listToLoadSorted[id].Progress = e.ProgressPercentage;
+                            _listToLoadSorted[id].SetLastBytes(e.BytesReceived);
                         };
                         wc.DownloadFileCompleted += (s, e) => { 
                             _loadRemainedByPriority--;

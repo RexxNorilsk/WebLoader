@@ -31,7 +31,6 @@ namespace WebLoader
 
         private DateTime _lastUpdate;
         private long _lastBytes = 0;
-        private float _speedCount;
 
         public void SetLastBytes(long bytes)
         {

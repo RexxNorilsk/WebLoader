@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ionic.Zip;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -43,6 +44,7 @@ namespace WebLoader
                 {
                     _loadRemainedByPriority++;
                     int id = i;
+                    string fileNameResult = Path.Combine(_loadFolder, Path.GetFileName(_listToLoadSorted[id].Link));
                     using (WebClient wc = new WebClient())
                     {
                         wc.DownloadProgressChanged += (s, e) => { 
@@ -51,18 +53,26 @@ namespace WebLoader
                         };
                         wc.DownloadFileCompleted += (s, e) => { 
                             _loadRemainedByPriority--;
+                            ZipCheck(fileNameResult);
                             CheckNextPriority();
                         };
                         wc.DownloadFileAsync(
                             new System.Uri(_listToLoadSorted[id].Link),
-                            Path.Combine(_loadFolder, Path.GetFileName(_listToLoadSorted[id].Link))
+                            fileNameResult
                         );
                     }
                 }
             }
             CheckNextPriority();
         }
-
+        private void ZipCheck(string fileName)
+        {
+            using (ZipFile zip = ZipFile.Read(fileName))
+            {
+                DirectoryInfo di = Directory.CreateDirectory(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName)));
+                zip.ExtractAll(di.FullName);
+            }
+        }
         private void CheckNextPriority()
         {
             if(_loadRemainedByPriority == 0)

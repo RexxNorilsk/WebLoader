@@ -37,6 +37,7 @@ namespace WebLoader
 
         public void StartToLoadByPriority(int targetPriority)
         {
+
             _loadRemainedByPriority = 0;
             for (int i = 0; i < _listToLoadSorted.Count; i++)
             {
@@ -45,41 +46,61 @@ namespace WebLoader
                     _loadRemainedByPriority++;
                     int id = i;
                     string fileNameResult = Path.Combine(_loadFolder, Path.GetFileName(_listToLoadSorted[id].Link));
-                    using (WebClient wc = new WebClient())
+                    try
                     {
-                        wc.DownloadProgressChanged += (s, e) => { 
-                            _listToLoadSorted[id].Progress = e.ProgressPercentage;
-                            _listToLoadSorted[id].SetLastBytes(e.BytesReceived);
-                        };
-                        wc.DownloadFileCompleted += (s, e) => { 
-                            _loadRemainedByPriority--;
-                            ZipCheck(fileNameResult);
-                            CheckNextPriority();
-                        };
-                        wc.DownloadFileAsync(
-                            new System.Uri(_listToLoadSorted[id].Link),
-                            fileNameResult
-                        );
+                        using (WebClient wc = new WebClient())
+                        {
+                            wc.DownloadProgressChanged += (s, e) =>
+                            {
+                                _listToLoadSorted[id].Progress = e.ProgressPercentage;
+                                _listToLoadSorted[id].SetLastBytes(e.BytesReceived);
+                            };
+                            wc.DownloadFileCompleted += (s, e) =>
+                            {
+                                _loadRemainedByPriority--;
+                                ZipCheck(fileNameResult);
+                                CheckNextPriority(null);
+                            };
+
+                            wc.DownloadFileAsync(
+                                new System.Uri(_listToLoadSorted[id].Link),
+                                fileNameResult
+                            );
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _loadRemainedByPriority = 0;
+                        _currentPriority = 0;
+                        CheckNextPriority(ex);
+                        return;
                     }
                 }
             }
-            CheckNextPriority();
+            CheckNextPriority(null);
         }
         private void ZipCheck(string fileName)
         {
-            using (ZipFile zip = ZipFile.Read(fileName))
+            if (!Directory.Exists(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName))))
             {
-                DirectoryInfo di = Directory.CreateDirectory(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName)));
-                zip.ExtractAll(di.FullName);
+                using (ZipFile zip = ZipFile.Read(fileName))
+                {
+                    DirectoryInfo di = Directory.CreateDirectory(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName)));
+                    zip.ExtractAll(di.FullName);
+                }
             }
         }
-        private void CheckNextPriority()
+        private void CheckNextPriority(Exception ex)
         {
-            if(_loadRemainedByPriority == 0)
+            if (ex != null)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            else if(_loadRemainedByPriority == 0)
             {
                 if (_currentPriority > 0)
                     StartToLoadByPriority(--_currentPriority);
-                else
+                else 
                     MessageBox.Show("Загрузка завершена");
             }
         }

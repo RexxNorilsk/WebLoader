@@ -13,13 +13,13 @@ namespace WebLoader
 {
     public class Loader
     {
-        private List<LoadLink> _listToLoadSorted = new List<LoadLink>();
+        private List<ILoadLink> _listToLoadSorted = new List<ILoadLink>();
         private int _loadRemainedByPriority;
         private int _currentPriority = 4;
         private string _loadFolder = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Loads");
         private Action<string> _callback;
 
-        public Loader(ObservableCollection<LoadLink> loadLinks, Action<string> callback) {
+        public Loader(ObservableCollection<ILoadLink> loadLinks, Action<string> callback) {
             _callback = callback;
             _listToLoadSorted = loadLinks.OrderBy(t => t.Priority).Reverse().ToList();
             for (int i = 0; i < _listToLoadSorted.Count; i++)
@@ -40,7 +40,6 @@ namespace WebLoader
 
         public void StartToLoadByPriority(int targetPriority)
         {
-
             _loadRemainedByPriority = 0;
             for (int i = 0; i < _listToLoadSorted.Count; i++)
             {
@@ -60,7 +59,9 @@ namespace WebLoader
                             };
                             wc.DownloadFileCompleted += (s, e) =>
                             {
+                                _listToLoadSorted[id].CompleteLoad?.Invoke();
                                 _loadRemainedByPriority--;
+                                _listToLoadSorted[id].Speed = "Завершено";
                                 ZipCheck(fileNameResult);
                                 CheckNextPriority(null);
                             };
@@ -86,12 +87,15 @@ namespace WebLoader
         {
             try
             {
-                if (!Directory.Exists(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName))))
+                if (ZipFile.IsZipFile(fileName))
                 {
-                    using (ZipFile zip = ZipFile.Read(fileName))
+                    if (!Directory.Exists(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName))))
                     {
-                        DirectoryInfo di = Directory.CreateDirectory(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName)));
-                        zip.ExtractAll(di.FullName);
+                        using (ZipFile zip = ZipFile.Read(fileName))
+                        {
+                            DirectoryInfo di = Directory.CreateDirectory(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName)));
+                            zip.ExtractAll(di.FullName);
+                        }
                     }
                 }
             }

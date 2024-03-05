@@ -22,7 +22,7 @@ namespace WebLoader
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ObservableCollection<LoadLink> _loadLinks = new ObservableCollection<LoadLink>();
+        private ObservableCollection<ILoadLink> _loadLinks = new ObservableCollection<ILoadLink>();
         private Loader _currentLoader;
         
         public MainWindow()
@@ -32,7 +32,7 @@ namespace WebLoader
 
         private void buttonAdd_Click(object sender, RoutedEventArgs e)
         {
-            _loadLinks.Add(new LoadLink("",0));
+            _loadLinks.Add(new LoadLinkForm("",0));
             listLoads.ItemsSource = _loadLinks;
         }
 

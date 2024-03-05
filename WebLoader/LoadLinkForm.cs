@@ -7,11 +7,11 @@ using System.Windows;
 
 namespace WebLoader
 {
-    public class LoadLink : DependencyObject
+    public class LoadLinkForm : DependencyObject, ILoadLink
     {
-        public static readonly DependencyProperty ProgressProperty = DependencyProperty.Register("Progress", typeof(float), typeof(LoadLink));
-        public static readonly DependencyProperty SpeedProperty = DependencyProperty.Register("Speed", typeof(string), typeof(LoadLink));
-        public LoadLink(string link, int priority)
+        public static readonly DependencyProperty ProgressProperty = DependencyProperty.Register("Progress", typeof(float), typeof(LoadLinkForm));
+        public static readonly DependencyProperty SpeedProperty = DependencyProperty.Register("Speed", typeof(string), typeof(LoadLinkForm));
+        public LoadLinkForm(string link, int priority)
         {
             Link = link;
             Priority = priority;
@@ -25,7 +25,8 @@ namespace WebLoader
             get { return (string)GetValue(SpeedProperty); }
             set { SetValue(SpeedProperty, (string)value); }
         }
-        
+        public Action CompleteLoad { get; set; }
+
         public string Link { get; set; }
         public int Priority { get; set; }
 
@@ -52,5 +53,6 @@ namespace WebLoader
             _lastBytes = bytes;
             _lastUpdate = now;
         }
+
     }
 }

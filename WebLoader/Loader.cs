@@ -11,13 +11,16 @@ using System.Windows;
 
 namespace WebLoader
 {
-    class Loader
+    public class Loader
     {
         private List<LoadLink> _listToLoadSorted = new List<LoadLink>();
         private int _loadRemainedByPriority;
         private int _currentPriority = 4;
         private string _loadFolder = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Loads");
-        public Loader(ObservableCollection<LoadLink> loadLinks) {
+        private Action<string> _callback;
+
+        public Loader(ObservableCollection<LoadLink> loadLinks, Action<string> callback) {
+            _callback = callback;
             _listToLoadSorted = loadLinks.OrderBy(t => t.Priority).Reverse().ToList();
             for (int i = 0; i < _listToLoadSorted.Count; i++)
             {
@@ -81,27 +84,35 @@ namespace WebLoader
         }
         private void ZipCheck(string fileName)
         {
-            if (!Directory.Exists(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName))))
+            try
             {
-                using (ZipFile zip = ZipFile.Read(fileName))
+                if (!Directory.Exists(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName))))
                 {
-                    DirectoryInfo di = Directory.CreateDirectory(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName)));
-                    zip.ExtractAll(di.FullName);
+                    using (ZipFile zip = ZipFile.Read(fileName))
+                    {
+                        DirectoryInfo di = Directory.CreateDirectory(Path.Combine(_loadFolder, Path.GetFileNameWithoutExtension(fileName)));
+                        zip.ExtractAll(di.FullName);
+                    }
                 }
+            }
+            catch (Exception ex){
+                _loadRemainedByPriority = 0;
+                _currentPriority = 0;
+                CheckNextPriority(ex);
             }
         }
         private void CheckNextPriority(Exception ex)
         {
             if (ex != null)
             {
-                MessageBox.Show(ex.Message);
+                _callback.Invoke(ex.Message);
             }
             else if(_loadRemainedByPriority == 0)
             {
                 if (_currentPriority > 0)
                     StartToLoadByPriority(--_currentPriority);
-                else 
-                    MessageBox.Show("Загрузка завершена");
+                else
+                    _callback.Invoke("Загрузка завершена");
             }
         }
     }

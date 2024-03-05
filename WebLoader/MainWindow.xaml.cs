@@ -24,7 +24,7 @@ namespace WebLoader
     {
         private ObservableCollection<LoadLink> _loadLinks = new ObservableCollection<LoadLink>();
         private Loader _currentLoader;
-
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -45,9 +45,9 @@ namespace WebLoader
         private void buttonLoad_Click(object sender, RoutedEventArgs e)
         {
             if(_currentLoader == null)
-                _currentLoader = new Loader(_loadLinks);
+                _currentLoader = new Loader(_loadLinks, (t) => MessageBox.Show(t));
             else if(_currentLoader.IsFinal())
-                _currentLoader = new Loader(_loadLinks);
+                _currentLoader = new Loader(_loadLinks, (t) => MessageBox.Show(t));
         }
     }
 }
